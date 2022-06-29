@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 477817265c8acb94489f2d33e694ab6d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - node: {fileID: 7058694105977121104, guid: ec3fcda6fe205bc4493606ccbb962814, type: 3}
+  - car: {fileID: 9057590006178496429, guid: 1cf424f980e48d944a87412e5c4d4d00, type: 3}
+  - Rect: {fileID: 2787659852399512876, guid: b002150ac41d19f4ebbfbe8f7bef1731, type: 3}
+  - parent_nodes: {instanceID: 0}
+  - parent_edges: {instanceID: 0}
+  - parent_cars: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

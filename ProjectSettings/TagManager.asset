@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Edge
+  - Node
+  - House
+  - Car
+  - TL
+  - NULL
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - traffic
+  - edge
+  - Car
+  - House
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: OffRoad
+    uniqueID: 974068635
+    locked: 0
+  - name: Stone
+    uniqueID: 1130450495
+    locked: 0
+  - name: Asphalt
+    uniqueID: 2347055749
+    locked: 0
+  - name: Lane
+    uniqueID: 2876641765
+    locked: 0
+  - name: node
+    uniqueID: 2480649067
+    locked: 0
+  - name: House
+    uniqueID: 3146304445
+    locked: 0
+  - name: Car
+    uniqueID: 1729532003
+    locked: 0
+  - name: TrafficLight
+    uniqueID: 1999318785
+    locked: 0
