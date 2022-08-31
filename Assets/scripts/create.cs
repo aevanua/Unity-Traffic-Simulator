@@ -14,31 +14,8 @@ using Random = UnityEngine.Random;
     }
     return -1;
 }*/
-/*
-    priority_queue<pair<int, int>> VList;
-    void deixtra(, int position)
-    {
-        VList.push(make_pair(0, position));
-        way[position] = 0;
-        while (!VList.empty())
-        {
-            position = VList.top().second;
-            VList.pop();
-            //while(VList.top().second==position &&!VList.empty())
-            //  VList.pop();
-            vector<pair<int, int>>::iterator it = ListOfVertex[position].begin();
-            for (; it != ListOfVertex[position].end(); it++)
-                if (way[position] + ((*it).first) < way[(*it).second])
-                {
-                    way[(*it).second] = ((*it).first) + way[position];
-                    VList.push(make_pair(-way[(*it).second], (*it).second));
-                }
-        }
-    }
-    */
 public class create : MonoBehaviour
-{
-    public int lines;
+{    
     GameObject temp;
     public GameObject TmpObjEdg;
     public GameObject car_prefab;
@@ -57,20 +34,25 @@ public class create : MonoBehaviour
     public List<List<(int, Road)>> AdjacencyList = new List<List<(int, Road)>>();
     public List<TrafficLight> TrafficLightList = new List<TrafficLight>();
     GameObject TmpObjNod;
-    float k = 1;
-    public int roads = 1, houses = 1, cars_amount = 1, TL_amount = 1;
-    House first, second;
+    float k = 1;        
     public List<float> way = new List<float>();
-    const int Nmax = 100000;
-    const int MaxW = 2009000999;
     Queue<int> VList = new Queue<int>();
     public List<int> NodeWay = new List<int>();
     Road tmproad = new Road();
     public List<Road> ListOfRoads = new List<Road>();
-    int remf, rems;
+    public int remf, rems;
     GameObject remnode;
     public List<House> ListofHouses = new List<House>();
-    Geometry Geometry = new Geometry();    
+    Geometry Geometry = new Geometry();
+    public int NumberIfInstance = 0;
+    string GenerateNum()
+    {
+        string s = NumberIfInstance.ToString();
+        while (s.Length != 6)
+            s = '0' + s;
+        NumberIfInstance++;
+        return s;
+    }
     void Start()
     {
         cum = Camera.main;
@@ -102,20 +84,33 @@ public class create : MonoBehaviour
         return minim;
 
     }
-    public void SpawnNode(Vector3 v)
+    public GameObject SpawnNode(Vector3 v, string data)
     {
         if (remnode != null)
-            Destroy(remnode);
+            Destroy(remnode);        
         GameObject tmpobj = Instantiate(node, v, Quaternion.identity, parent_nodes);
-        tmpobj.GetComponent<Node>().pos = v;
-        tmpobj.GetComponent<Node>().number = nodes.Count;
-        tmpobj.GetComponent<Node>().NodeObj = tmpobj;
-        tmpobj.name = "node" + nodes.Count;
+        if(data.Length!=0)
+        {
+            JsonUtility.FromJsonOverwrite(data, tmpobj.GetComponent<Node>());            
+            tmpobj.GetComponent<Node>().NodeObj = tmpobj;
+            tmpobj.transform.position = tmpobj.GetComponent<Node>().pos;
+            if (tmpobj.GetComponent<Node>().HouseLink!=null)
+                tmpobj.SetActive(false);
+        }
+        else
+        {
+            tmpobj.GetComponent<Node>().pos = v;
+            tmpobj.GetComponent<Node>().number = nodes.Count;
+            tmpobj.GetComponent<Node>().NodeObj = tmpobj;
+            tmpobj.GetComponent<Node>().ID = GenerateNum();
+        }
+        tmpobj.name = tmpobj.GetComponent<Node>().ID;
         nodes.Add(tmpobj.GetComponent<Node>());
         way.Add(0f);
         NodeWay.Add(0);
+        
         AdjacencyList.Add(new List<(int, Road)>());
-
+        return tmpobj;
     }
     public void EdgeChange(Vector3 start, Vector3 finish, GameObject TmpObjEdg)
     {                
@@ -127,37 +122,48 @@ public class create : MonoBehaviour
         
         TmpObjEdg.transform.rotation = Geometry.CalculateRotation(start, finish, 0f);
     }
-    public Road SpawnEdge(int first_node, int second_node, Road ParentRoad)
+    public Road SpawnEdge(int first_node, int second_node, Road ParentRoad,string data)
     {
        
         Road TmpRoad = new Road();
-        bool OneWay = false;
-        if(ParentRoad!=null)
-        {
-            k = ParentRoad.Road_coefficient;
-            OneWay = ParentRoad.OneWay;
+        if (data.Length != 0)
+        {           
+            TmpRoad = TmpRoad.SpawnRoad(data, parent_edges);           
+            first_node = TmpRoad.FirstNode;
+            second_node = TmpRoad.SecondNode;
+            /**/
         }
         else
         {
-            if (temp.GetComponent<events>().OneWay) OneWay = true;
-            if (temp.GetComponent<events>().FlagAsphalt)
-                k = 1;
-            else if (temp.GetComponent<events>().FlagStone)
-                k = 0.6f;
+            bool OneWay = false;
+            if (ParentRoad != null)
+            {
+                k = ParentRoad.Road_coefficient;
+                OneWay = ParentRoad.OneWay;
+            }
             else
-                k = 0.3f;
-        }    
-        if (!OneWay &&!Geometry.IsRightDirection(nodes[first_node].pos, nodes[second_node].pos))
-            Swap(ref first_node, ref second_node);
-        TmpRoad = TmpRoad.SpawnRoad(int.Parse(GameObject.Find("Main Camera").GetComponent<ReadInput>().input) , first_node, second_node, nodes[first_node].pos, nodes[second_node].pos, OneWay, k, parent_edges);        
-        if (OneWay)
+            {
+                if (temp.GetComponent<events>().OneWay) OneWay = true;
+                if (temp.GetComponent<events>().FlagAsphalt)
+                    k = 1;
+                else if (temp.GetComponent<events>().FlagStone)
+                    k = 0.6f;
+                else
+                    k = 0.3f;
+            }
+            if (!OneWay && !Geometry.IsRightDirection(nodes[first_node].pos, nodes[second_node].pos))
+                Swap(ref first_node, ref second_node);
+            TmpRoad = TmpRoad.SpawnRoad(int.Parse(GameObject.Find("Main Camera").GetComponent<ReadInput>().input), first_node, second_node, nodes[first_node].pos, nodes[second_node].pos, OneWay, k, parent_edges);
+            TmpRoad.ID= GenerateNum();
+        }
+        TmpRoad.obj.name = TmpRoad.ID;
+        if (TmpRoad.OneWay)
             AdjacencyList[first_node].Add((second_node, TmpRoad));
         else
-        {
+        {  
             AdjacencyList[first_node].Add((second_node, TmpRoad));
             AdjacencyList[second_node].Add((first_node, TmpRoad));
-        }
-        TmpRoad.obj.name = "Road" + roads++;
+        }        
         ListOfRoads.Add(TmpRoad);
         return TmpRoad;
     }
@@ -166,6 +172,8 @@ public class create : MonoBehaviour
         GameObject tmpObj = Instantiate(trafficlightpref, TmpObjNod.transform.position, TmpObjNod.transform.rotation, parent_trafficLights);
         tmpObj.AddComponent<TrafficLight>();
         TrafficLight tmp = tmpObj.GetComponent<TrafficLight>();
+        tmpObj.GetComponent<TrafficLight>().pos = TmpObjNod.transform.position;
+        tmpObj.GetComponent<TrafficLight>().Angle = TmpObjNod.transform.rotation;
         Road tmpRoad = GetRoad(first_node, second_node);
         OneWayRoad tmpOneWay;
         if (tmpRoad.OneWay || (!tmpRoad.OneWay && Geometry.IsRightDirection(nodes[first_node].pos, nodes[second_node].pos)))
@@ -173,12 +181,32 @@ public class create : MonoBehaviour
         else
             tmpOneWay = tmpRoad.LeftRoad;
         OneDirRoad tmpOneDir = tmpOneWay.OneDirList[tmpOneWay.OneDirList.Count - 1];
-        tmp.Init(tmpOneDir.StartNode, second_node, tmpObj, int.Parse(GameObject.Find("Main Camera").GetComponent<InputRed>().input), int.Parse(GameObject.Find("Main Camera").GetComponent<InputGreen>().input), 0, tmpOneDir);
+        tmp.Init(tmpOneDir.StartNode, second_node, tmpObj, int.Parse(GameObject.Find("Main Camera").GetComponent<InputRed>().input), int.Parse(GameObject.Find("Main Camera").GetComponent<InputGreen>().input), 0, tmpOneDir, tmpRoad);
         
         TrafficLightList.Add(tmp);
-        tmp.name = "TrafficLight" + TL_amount++;
+        tmp.ID = GenerateNum();
+        tmpObj.name = tmp.ID;
     }
+    public void SpawnTrafficLight(string data)
+    {
+        GameObject tmpObj = Instantiate(trafficlightpref, Vector3.zero, Quaternion.Euler(Vector3.zero), parent_trafficLights);
+        tmpObj.AddComponent<TrafficLight>();
+        JsonUtility.FromJsonOverwrite(data, tmpObj.GetComponent<TrafficLight>());
+        tmpObj.GetComponent<TrafficLight>().obj = tmpObj;
+        tmpObj.transform.rotation = tmpObj.GetComponent<TrafficLight>().Angle;
+        tmpObj.transform.position = tmpObj.GetComponent<TrafficLight>().pos;
 
+        TrafficLight tmp = tmpObj.GetComponent<TrafficLight>();
+        Road tmpRoad = GetRoad(tmp.StartRoad, tmp.FinishRoad);
+        OneWayRoad tmpOneWay;        
+        if (tmpRoad.OneWay || (!tmpRoad.OneWay && Geometry.IsRightDirection(nodes[tmp.StartRoad].pos, nodes[tmp.FinishRoad].pos)))
+            tmpOneWay = tmpRoad.RightRoad;
+        else
+            tmpOneWay = tmpRoad.LeftRoad;
+        OneDirRoad tmpOneDir = tmpOneWay.OneDirList[tmpOneWay.OneDirList.Count - 1];
+        TrafficLightList.Add(tmp);
+        tmpObj.name = tmp.ID;       
+    }
     public Road GetRoad(int first, int second)
     {
         for (int i = 0; i < ListOfRoads.Count; i++)
@@ -212,12 +240,11 @@ public class create : MonoBehaviour
         Car TmpCar = TmpObj.GetComponent<Car>();
         TmpCar.Init(tmpLane.StartNodeVec, Geometry.GetPerpendicularIntersection(tmpLane.StartNodeVec, tmpLane.FinishNodeVec, middlePos), tmpLane.FinishNodeVec, TmpObj, 0.1f, tmpLane, tmpOneDir, tmpOneWay, start, finish);
         cars.Add(TmpCar);
-        TmpCar.name = "Car" + cars_amount++;
+        
         return TmpObj;
     }
     void AddRoad(int CurPos,Road road, bool IsRight)
     {
-        Debug.Log(road);
         OneDirRoad OneDirRoad = new OneDirRoad();
         int first,second;
         OneWayRoad Temp=road.RightRoad;
@@ -259,14 +286,30 @@ public class create : MonoBehaviour
         ListofHouses.Add(TmpObj.GetComponent<House>());
         TmpObj.GetComponent<House>().road = GetRoad(first_node, second_node);
         TmpObj.GetComponent<House>().HNode = nodes.Count;
+        TmpObj.GetComponent<House>().pos = TmpObjNod.transform.position;
+        TmpObj.GetComponent<House>().Angle = TmpObjNod.transform.rotation;
         TmpObj.GetComponent<House>().IsRight = IsRight;
         TmpObj.GetComponent<House>().HouseObj = TmpObj;
-        SpawnNode(pos);
+        SpawnNode(pos,"");
         nodes[nodes.Count - 1].HouseLink = TmpObj.GetComponent<House>();
         AdjacencyList.Add(new List<(int, Road)>());        
         AddRoad(nodes.Count - 1,GetRoad(first_node,second_node),IsRight);
         nodes[nodes.Count - 1].NodeObj.SetActive(false);
-        TmpObj.name = "House"+houses++;
+        TmpObj.GetComponent<House>().ID = GenerateNum();
+        TmpObj.name = TmpObj.GetComponent<House>().ID;
+    }
+    public void SpawnHouse(string data)
+    {
+        GameObject TmpObj = Instantiate(house, Vector3.zero, Quaternion.Euler(Vector3.zero), parent_houses);
+        JsonUtility.FromJsonOverwrite(data, TmpObj.GetComponent<House>());
+        TmpObj.transform.rotation = TmpObj.GetComponent<House>().Angle;
+        TmpObj.transform.position = TmpObj.GetComponent<House>().pos;       
+        TmpObj.GetComponent<House>().road = (GameObject.Find(TmpObj.GetComponent<House>().RoadID)).GetComponent<Road>();
+        ListofHouses.Add(TmpObj.GetComponent<House>());
+        nodes[TmpObj.GetComponent<House>().HNode].HouseLink = TmpObj.GetComponent<House>();
+        nodes[TmpObj.GetComponent<House>().HNode].NodeObj.SetActive(false);
+        AddRoad(TmpObj.GetComponent<House>().HNode, TmpObj.GetComponent<House>().road, TmpObj.GetComponent<House>().IsRight);
+        TmpObj.name = TmpObj.GetComponent<House>().ID;
     }
     public bool EdgeExist(int first_node, int second_node)
     {
@@ -310,13 +353,13 @@ public class create : MonoBehaviour
     }
     void RewriteEdges(int first_node, int second_node, int inserted_node)
     {        
-        Road TmpRoad = GetRoad(first_node, second_node);       
+        Road TmpRoad = GetRoad(first_node, second_node);        
         AddRoad(inserted_node, TmpRoad, true);
         AddRoad(inserted_node, TmpRoad, false);
-        Road tmp=SpawnEdge(first_node, inserted_node,TmpRoad);      
+        Road tmp=SpawnEdge(first_node, inserted_node,TmpRoad,"");      
         tmp.Road_coefficient = TmpRoad.Road_coefficient;        
         CopyNRewriteRoad(TmpRoad,tmp);
-        tmp = SpawnEdge(inserted_node,second_node,TmpRoad);
+        tmp = SpawnEdge(inserted_node,second_node,TmpRoad,"");
         tmp.Road_coefficient = TmpRoad.Road_coefficient;
         CopyNRewriteRoad(TmpRoad,tmp);
         AdjacencyList[first_node].Remove((inserted_node, TmpRoad));
@@ -424,7 +467,14 @@ public class create : MonoBehaviour
         DelSomeShit(tmp, false);
         if(tmp.LeftRoad!=null)        
             DelSomeShit(tmp, true);            
-        if(AdjacencyList[tmp.FirstNode].Count==0)
+        for (int i = 0; i<TrafficLightList.Count; i++)
+            if(TrafficLightList[i]!=null && TrafficLightList[i].Road==tmp)
+            {
+                Destroy(TrafficLightList[i].obj);
+                Destroy(TrafficLightList[i]);
+                TrafficLightList.RemoveAt(i--);
+            }
+        if (AdjacencyList[tmp.FirstNode].Count==0)
         {
             Destroy(nodes[tmp.FirstNode].NodeObj);
             Destroy(nodes[tmp.FirstNode]);           
@@ -443,7 +493,6 @@ public class create : MonoBehaviour
     }
     void Update()
     {
-        
         if (EventSystem.current.IsPointerOverGameObject()) return;
         pos = GetCoorByClick();
         TmpObjNod.transform.position = pos;
@@ -452,8 +501,10 @@ public class create : MonoBehaviour
         else if (temp.GetComponent<events>().FlagEdges)
         {
             ChangeCurs(node);
+            FindNearestEdge();
             if (Input.GetMouseButtonDown(0))
             {
+                
                 if (AdjacencyList.Count != 0 && Geometry.IsOnLane(nodes[first_node].pos, nodes[second_node].pos, pos) && Vector3.Distance(Geometry.GetPerpendicularIntersection(nodes[first_node].pos, nodes[second_node].pos, pos), pos) <= 1f)
                     pos = Geometry.GetPerpendicularIntersection(nodes[first_node].pos, nodes[second_node].pos, pos);
                 if (FlagDrawEdge == 0)
@@ -466,7 +517,7 @@ public class create : MonoBehaviour
                         remnode = Instantiate(node, pos, Quaternion.identity);
                         nfirst_node = nodes.Count;
                         if (IfIntersected(pos))
-                        {
+                        {              
                             remf = first_node;
                             rems = second_node;
                         }
@@ -492,13 +543,12 @@ public class create : MonoBehaviour
                     if (remnode != null)
                     {                       
                         v = remnode.transform.position;
-                        SpawnNode(v);
+                        SpawnNode(v,"");
                     }                                                            
                     nsecond_node = CatchNode(pos);
                     Destroy(TmpObjEdg);                        
                     if(remf!=-1)
                     {
-
                         RewriteEdges(remf, rems, nfirst_node);
                         remf = -1;
                         rems = -1;
@@ -506,16 +556,15 @@ public class create : MonoBehaviour
                     if (nsecond_node == -1)
                     {                     
                         nsecond_node = nodes.Count;
-                        SpawnNode(pos);
+                        SpawnNode(pos,"");
                         if (IfIntersected(pos))
                             RewriteEdges(first_node, second_node, nsecond_node);                        
                     }
                     FlagDrawEdge = 0;
                     if (GetRoad(nfirst_node, nsecond_node)==null)
-                        SpawnEdge(nfirst_node, nsecond_node,null);                                        
+                        SpawnEdge(nfirst_node, nsecond_node,null,"");                                        
                 }               
-            }
-            FindNearestEdge();
+            }            
             if (AdjacencyList.Count != 0 && Geometry.IsOnLane(nodes[first_node].pos, nodes[second_node].pos, pos) && Vector3.Distance(Geometry.GetPerpendicularIntersection(nodes[first_node].pos, nodes[second_node].pos, pos), pos) <= 1f)
                 TmpObjNod.transform.position = Geometry.GetPerpendicularIntersection(nodes[first_node].pos, nodes[second_node].pos, pos);
             else
@@ -610,7 +659,10 @@ public class create : MonoBehaviour
                 Vector3 Res = Geometry.GetPerpendicularIntersection(nodes[first_node].pos, nodes[second_node].pos, pos);
                 Road tmp = GetRoad(first_node, second_node);
                 TmpObjNod.transform.rotation = Geometry.CalculateRotation(nodes[second_node].pos, nodes[first_node].pos, 0f);       
-                TmpObjNod.transform.position = Geometry.GetPerpendicularPoint(Res, pos,0.25f);                     
+                if(GetRoad(first_node,second_node).OneWay)
+                    TmpObjNod.transform.position = Geometry.GetPerpendicularPoint(Res, pos, GetRoad(first_node, second_node).LanesNum*0.125f);                     
+                else
+                    TmpObjNod.transform.position = Geometry.GetPerpendicularPoint(Res, pos, GetRoad(first_node, second_node).LanesNum * 0.25f);
                 if (Geometry.IsRightDirection(nodes[first_node].pos, nodes[second_node].pos))
                 {
                     if (Geometry.Vector_Multi(nodes[second_node].pos - nodes[first_node].pos, TmpObjNod.transform.position - nodes[first_node].pos) > 0 && TmpObjNod.transform.rotation.z > 180)
@@ -715,6 +767,7 @@ public class create : MonoBehaviour
                 {
                     if (FlagDelClicks % 2==1)
                     {
+                        nodes[nfirst_node].NodeObj.GetComponent<SpriteRenderer>().color = Color.black;
                         if (nfirst_node == nsecond_node)                                                   
                             for (int i = 0; i< AdjacencyList[nfirst_node].Count;)                            
                                 DeleteEdge(nfirst_node, AdjacencyList[nfirst_node][i].Item1);                                                    
@@ -722,7 +775,10 @@ public class create : MonoBehaviour
                             DeleteEdge(nfirst_node, nsecond_node);                        
                     }
                     else
+                    {
                         nfirst_node = nsecond_node;
+                        nodes[nfirst_node].NodeObj.GetComponent<SpriteRenderer>().color = Color.red;
+                    }
                     FlagDelClicks++;
                 }
             }
@@ -730,6 +786,6 @@ public class create : MonoBehaviour
         if (!temp.GetComponent<events>().DelFlag)
         {
             FlagDelClicks = 0;          
-        }
+        }        
     }
 }

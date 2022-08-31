@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class OneDirRoad : MonoBehaviour
 {
+    public string ID;
     public int OneDirCars = 0;
     public int StartNode, FinishNode;
     public Vector3 StartNodeVec, FinishNodeVec;
     public List<Lane> LaneList = new List<Lane>();
-    TrafficLight TrafficLight;
+    public TrafficLight TrafficLight;
+    public GameObject obj;
+    public GameObject SaveObj;
     Geometry Geometry = new Geometry();
     Lane Lane = new Lane();
-    public GameObject obj;
+    
 
     public OneDirRoad SpawnOneRoad(int StartNode, int FinishNode, int lanes_num, Vector3 StartNodeVec, Vector3 FinishNodeVec, GameObject parent, bool IsOneWay)
     {
@@ -49,7 +52,7 @@ public class OneDirRoad : MonoBehaviour
         OneDirCars = 0;
         for (int i = 0; i < LaneList.Count; i++)
         {
-            Debug.Log(LaneList[i].Calc_Cars);
+            //Debug.Log(LaneList[i].Calc_Cars);
             OneDirCars += LaneList[i].Calc_Cars;
         }
     }

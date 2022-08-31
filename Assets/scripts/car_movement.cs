@@ -44,9 +44,10 @@ public class car_movement : MonoBehaviour
         List<int> RandomList = new List<int>();
         for (int i = 0; i < nodes.Count; i++)
         {
-            if (nodes[i].HouseLink != null && NodeWay[i] != -1)
-                RandomList.Add(i);
+            if (nodes[i].HouseLink != null && NodeWay[i] != -1)            
+                RandomList.Add(i);         
         }
+        
         return RandomList[Random.Range(0, RandomList.Count)];
     }
 
@@ -79,6 +80,8 @@ public class car_movement : MonoBehaviour
 
     void Update()
     {
+        if(temp==null)
+            temp = GameObject.Find("path");
         nodes = temp.GetComponent<create>().nodes;
         ListofHouses = temp.GetComponent<create>().ListofHouses;
         way = temp.GetComponent<create>().way;
@@ -103,8 +106,7 @@ public class car_movement : MonoBehaviour
                 if (cars[i].WayList.Count != 0)
                 {
                     OneWayRoad tmpOneWay = new OneWayRoad();
-                    OneDirRoad tmp = cars[i].WayList.Pop();
-                    Debug.Log(tmp.transform.parent.transform.parent);
+                    OneDirRoad tmp = cars[i].WayList.Pop();                    
                     tmpOneWay = tmp.obj.transform.parent.GetComponent<OneWayRoad>();
                     
                     cars[i].first_node = tmp.StartNode;

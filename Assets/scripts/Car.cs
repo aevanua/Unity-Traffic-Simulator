@@ -163,6 +163,8 @@ public class Car : MonoBehaviour
     }
     void Update()
     {
+        if (temp2 == null)
+            temp2 = GameObject.Find("path");
         AdjacencyList = temp2.GetComponent<create>().AdjacencyList;
         eps = SpeedLimit * temp.GetComponent<events>().worldspeed;
         TrafficLightsList = temp2.GetComponent<create>().TrafficLightList;

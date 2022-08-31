@@ -1,0 +1,16 @@
+6
+{"pos":{"x":946.6900024414063,"y":535.2407836914063,"z":0.0},"number":0,"ID":"000000","HouseLink":{"instanceID":0},"NodeObj":{"instanceID":-18748}}
+{"pos":{"x":950.0480346679688,"y":542.5460205078125,"z":0.0},"number":1,"ID":"000001","HouseLink":{"instanceID":0},"NodeObj":{"instanceID":-18756}}
+{"pos":{"x":953.7998657226563,"y":530.3990478515625,"z":0.0},"number":2,"ID":"000003","HouseLink":{"instanceID":0},"NodeObj":{"instanceID":-18968}}
+{"pos":{"x":958.952880859375,"y":541.99951171875,"z":0.0},"number":3,"ID":"000005","HouseLink":{"instanceID":0},"NodeObj":{"instanceID":-19180}}
+{"pos":{"x":948.6859741210938,"y":539.5830078125,"z":0.0},"number":4,"ID":"000007","HouseLink":{"instanceID":-19410},"NodeObj":{"instanceID":-19426}}
+{"pos":{"x":957.0609130859375,"y":537.7402954101563,"z":0.0},"number":5,"ID":"000009","HouseLink":{"instanceID":-19482},"NodeObj":{"instanceID":-19498}}
+3
+{"OneWay":false,"FirstNode":0,"SecondNode":1,"RightRoad":{"instanceID":-18774},"LeftRoad":{"instanceID":-18822},"RightRoadTraffic":{"instanceID":-18870},"LeftRoadTraffic":{"instanceID":-18918},"Len":8.040079116821289,"Width":0.0,"obj":{"instanceID":-18764},"Calc_Cars":0,"Road_coefficient":1.0,"StartNodeVec":{"x":946.6900024414063,"y":535.2407836914063,"z":0.0},"FinishNodeVec":{"x":950.0480346679688,"y":542.5460205078125,"z":0.0},"LanesNum":2,"ID":"000002"}
+{"OneWay":false,"FirstNode":1,"SecondNode":2,"RightRoad":{"instanceID":-18986},"LeftRoad":{"instanceID":-19034},"RightRoadTraffic":{"instanceID":-19082},"LeftRoadTraffic":{"instanceID":-19130},"Len":12.713189125061036,"Width":0.0,"obj":{"instanceID":-18976},"Calc_Cars":0,"Road_coefficient":1.0,"StartNodeVec":{"x":950.0480346679688,"y":542.5460205078125,"z":0.0},"FinishNodeVec":{"x":953.7998657226563,"y":530.3990478515625,"z":0.0},"LanesNum":2,"ID":"000004"}
+{"OneWay":false,"FirstNode":2,"SecondNode":3,"RightRoad":{"instanceID":-19198},"LeftRoad":{"instanceID":-19246},"RightRoadTraffic":{"instanceID":-19294},"LeftRoadTraffic":{"instanceID":-19342},"Len":12.693475723266602,"Width":0.0,"obj":{"instanceID":-19188},"Calc_Cars":0,"Road_coefficient":1.0,"StartNodeVec":{"x":953.7998657226563,"y":530.3990478515625,"z":0.0},"FinishNodeVec":{"x":958.952880859375,"y":541.99951171875,"z":0.0},"LanesNum":2,"ID":"000006"}
+2
+{"pos":{"x":948.231689453125,"y":539.7918090820313,"z":0.0},"HNode":4,"road":{"instanceID":-18768},"RoadID":"000002","IsRight":false,"HouseObj":{"instanceID":-19406},"ID":"000008","Angle":{"x":0.0,"y":0.0,"z":0.5396009087562561,"w":0.8419209718704224}}
+{"pos":{"x":957.5178833007813,"y":537.5372924804688,"z":0.0},"HNode":5,"road":{"instanceID":-19192},"RoadID":"000006","IsRight":true,"HouseObj":{"instanceID":-19478},"ID":"000010","Angle":{"x":0.0,"y":0.0,"z":0.8384383320808411,"w":-0.5449965000152588}}
+0
+11

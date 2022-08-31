@@ -22,6 +22,7 @@ public class events : MonoBehaviour
     public bool DelFlag = false;
     public float worldspeed = 1.0f;
     public float prev_worldspeed = 1.0f;
+    public bool FlagClose = false;
     public GameObject CarOb;
     public GameObject EdgOb;
     public GameObject TrLOb;
@@ -39,16 +40,20 @@ public class events : MonoBehaviour
     public GameObject Increase;
     public GameObject Decrease;
     public GameObject temp;
+    public GameObject temp2;
     public GameObject RoadCanvas;
     public GameObject TLCanvas;
+    public GameObject Save2;
     public bool FPS = false;
     public bool TPS = true;
     public bool FlagSyncTL = false;
     public bool FlagDesyncTL = false;
-
+    string rem = "";
     void Start()
     {
         temp = GameObject.Find("path");
+        temp2 = GameObject.Find("CanvasFon");
+        temp2.SetActive(false);
         CarOb = GameObject.Find("CarButton");
         EdgOb = GameObject.Find("EdgeButton");
         TrLOb = GameObject.Find("TrafficLightButton");
@@ -68,6 +73,7 @@ public class events : MonoBehaviour
         FlagAsphalt = true;
         RoadCanvas.SetActive(false);
         TLCanvas.SetActive(false);
+        Save2.SetActive(false);
         OneWay = false;
         CarOb.GetComponent<Button>().interactable = false;
     }
@@ -233,8 +239,7 @@ public class events : MonoBehaviour
         }
         else
         {
-            temp.GetComponent<create>().cars.Clear();
-            temp.GetComponent<create>().cars_amount = 1;
+            temp.GetComponent<create>().cars.Clear();            
             for (var i = GameObject.Find("cars").transform.childCount - 1; i >= 0; i--)
                 Destroy(GameObject.Find("cars").transform.GetChild(i).gameObject);
             CarOb.GetComponent<Button>().interactable = false;
@@ -331,10 +336,47 @@ public class events : MonoBehaviour
     {
         FPS = true;
         TPS = false;
-    }
-    public void TryShit()
+    }   
+
+    public void OpenClose()
     {
-        //GetComponent<Animation>().Play("HB"); //������������ �������� shit:1.
+        if (FlagClose)
+            CloseMenu();
+        else
+            ActiveMenu();
+        FlagClose = !FlagClose;
     }
 
+    void Update()
+    {
+        if (temp == null)
+            temp = GameObject.Find("path");
+        if (Input.GetKeyDown("escape"))
+            OpenClose();
+    }
+
+    public void ActiveMenu()
+    {
+        temp2.SetActive(true);
+        Camera.main.GetComponent<CameraMove>().zspeed = 0;
+        Camera.main.GetComponent<CameraMove>().xyspeed = 0;
+    }
+
+    public void CloseMenu()
+    {
+        temp2.SetActive(false);
+        Save2.SetActive(false);
+        Camera.main.GetComponent<CameraMove>().zspeed = 2;
+        Camera.main.GetComponent<CameraMove>().xyspeed = 0.5f;
+    }
+
+    public void Save()
+    {
+        Save2.SetActive(true);
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
+    }
 }

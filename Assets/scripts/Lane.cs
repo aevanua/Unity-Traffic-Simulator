@@ -7,8 +7,7 @@ public class Lane : MonoBehaviour
     public int Calc_Cars;
     public int StartNode, FinishNode;
     public int CurCarStop = 0;
-    public Vector3 StartNodeVec, FinishNodeVec;
-    public GameObject LaneObj;
+    public Vector3 StartNodeVec, FinishNodeVec;    
     Geometry Geometry = new Geometry();
     List<Car> cars = new List<Car>();
     GameObject temp, temp2;
@@ -51,8 +50,8 @@ public class Lane : MonoBehaviour
     }
 
     void Start()
-    {
-        temp = GameObject.Find("path");
+    {       
+        temp = GameObject.Find("path");     
         temp2 = GameObject.Find("EventSystem");
     }
 
@@ -63,6 +62,8 @@ public class Lane : MonoBehaviour
 
     void Update()
     {
+        if(temp==null)
+            temp = GameObject.Find("path");        
         cars = temp.GetComponent<create>().cars;
         Calculate_cars();
     }

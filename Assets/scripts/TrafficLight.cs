@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class TrafficLight : MonoBehaviour
 {
+    public string ID;
+    public Vector3 pos;
+    public Quaternion Angle;
     public int first;
     public int second;
-    public GameObject obj;
+    public int StartRoad;
+    public int FinishRoad;
+    public GameObject obj;    
     public OneDirRoad OneDir;
+    public Road Road;
+    public string RoadID;
     public bool flag = true;//0 red 1 green
     public float red_period , green_period , curr_period , time;
     
@@ -16,9 +23,10 @@ public class TrafficLight : MonoBehaviour
     List<Node> nodes = new List<Node>();
     GameObject temp , temp2;
 
-    public void Init(int first, int second, GameObject obj, int red_period, int green_period , int time, OneDirRoad OneDir)
+    public void Init(int first, int second, GameObject obj, int red_period, int green_period , int time, OneDirRoad OneDir, Road Road)
     {
-        this.first = first; this.second = second; this.obj = obj; this.red_period = red_period; this.green_period = green_period; this.time = time; this.OneDir = OneDir;
+        this.first = first; this.second = second; this.obj = obj; this.red_period = red_period; this.green_period = green_period; this.time = time; this.OneDir = OneDir;this.Road = Road;
+        this.StartRoad = Road.FirstNode; this.FinishRoad =Road.SecondNode;
     }
 
     public float GetTimeToPass()
@@ -27,27 +35,18 @@ public class TrafficLight : MonoBehaviour
         else return (curr_period - time);
     }
 
-    /*public void CountCurrentCars()
-    {
-        CurCars = 0;
-        for(int i = 0;i < cars.Count;i++)
-        {
-            if (nodes[first] + cars[i].offset == cars[i].start && nodes[second] + cars[i].offset == cars[i].Aim)
-                CurCars++;
-        }
-    }
-    */
     void Start()
     {
-        //time = 0;
+    
         curr_period = green_period;
         obj.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
         temp = GameObject.Find("path");
         temp2 = GameObject.Find("EventSystem");
     }
-    // Update is called once per frame
     void Update()
     {
+        if (temp == null)
+            temp = GameObject.Find("path");
         nodes = temp.GetComponent<create>().nodes;
         cars = temp.GetComponent<create>().cars;
         time += Time.deltaTime;
@@ -66,4 +65,10 @@ public class TrafficLight : MonoBehaviour
         }
         //CountCurrentCars();
     }
+    public string SaveData()
+    {
+        this.RoadID = Road.ID;
+        return JsonUtility.ToJson(this, false);
+    }
+    
 }

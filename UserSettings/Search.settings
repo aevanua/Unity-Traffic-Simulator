@@ -10,6 +10,9 @@ scopes = {
 	"last_search.785D90A9" = ""
 	"InspectorPreview.785D90A9" = "0"
 	"currentGroup.785D90A9" = "scene"
+	"last_search.B064B029" = "RunTime"
+	"InspectorPreview.B064B029" = "0"
+	"currentGroup.B064B029" = "all"
 }
 providers = {
 	asset = {
@@ -49,6 +52,7 @@ providers = {
 	}
 }
 recentSearches = [
+	"RunTime"
 ]
 searchItemFavorites = [
 ]

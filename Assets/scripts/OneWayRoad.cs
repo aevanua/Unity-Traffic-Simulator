@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class OneWayRoad : MonoBehaviour
 {
+    public string ID;
     GameObject temp;
     public int Calc_Cars;
     public int StartNode, FinishNode;
@@ -11,6 +12,7 @@ public class OneWayRoad : MonoBehaviour
     bool Oneway;
     Vector3 StartNodeVec, FinishNodeVec;
     public GameObject obj;
+    public GameObject SaveObj;
     Geometry Geometry = new Geometry();
     OneDirRoad OneDirRoad = new OneDirRoad();
     public float Road_coefficient;
@@ -40,7 +42,7 @@ public class OneWayRoad : MonoBehaviour
         {
             this.StartNodeVec = StartNodeVec;
             this.FinishNodeVec = FinishNodeVec;
-        }
+        }     
         obj.transform.GetChild(0).transform.position = (this.StartNodeVec + this.FinishNodeVec) / 2;        
         obj.transform.GetChild(0).transform.rotation = Geometry.CalculateRotation(this.StartNodeVec, this.FinishNodeVec, 0f);
         if (!flag_traffic)
@@ -75,18 +77,15 @@ public class OneWayRoad : MonoBehaviour
                 offset = 0;
             Vector3 TempStart = Geometry.GetPerpendicularPointTemp(FinishNodeVec - StartNodeVec, StartNodeVec, offset);
             Vector3 TempFinish = Geometry.GetPerpendicularPointTemp(FinishNodeVec - StartNodeVec, FinishNodeVec, offset);
-            if (!(OneWay && i == LanesNum))
+            if (!(OneWay && i == LanesNum) && Road_coefficient != 0.3f)
             {
                 GameObject obj2 = Instantiate(Resources.Load<GameObject>("LaneTexture"), (TempStart + TempFinish) / 2, Geometry.CalculateRotation(TempStart, TempFinish, 0f), obj.transform);
                 if (!Geometry.IsRightDirection(TempStart, TempFinish)) obj2.transform.rotation *= Quaternion.Euler(0, 0, 180);
-                if (Road_coefficient != 0.3f)
-                {
-                    if (i ==LanesNum && !OneWay) obj2.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("LaneSprite2");
-                    else if (i != LanesNum) obj2.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("LaneSprite1");
-                    obj2.transform.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Tiled;
-                    if (i == LanesNum && !OneWay) obj2.transform.GetComponent<SpriteRenderer>().size = new Vector2(Vector3.Distance(TempStart, TempFinish), 0.3f);
-                    else if (i != LanesNum) obj2.transform.GetComponent<SpriteRenderer>().size = new Vector2(Vector3.Distance(TempStart, TempFinish) - 1.5f, 0.3f);
-                }
+                if (i ==LanesNum && !OneWay) obj2.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("LaneSprite2");
+                else if (i != LanesNum) obj2.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("LaneSprite1");
+                obj2.transform.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Tiled;
+                if (i == LanesNum && !OneWay) obj2.transform.GetComponent<SpriteRenderer>().size = new Vector2(Vector3.Distance(TempStart, TempFinish), 0.3f);
+                else if (i != LanesNum) obj2.transform.GetComponent<SpriteRenderer>().size = new Vector2(Vector3.Distance(TempStart, TempFinish) - 1.5f, 0.3f);
                 obj2.transform.localScale = new Vector3(1, 1, 1);
             }
         }

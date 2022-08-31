@@ -39,13 +39,6 @@ namespace UnityEngine.UI
             return Add(baseMat, stencilID, operation, compareFunction, colorWriteMask, 255, 255);
         }
 
-        static void LogWarningWhenNotInBatchmode(string warning, Object context)
-        {
-            // Do not log warnings in batchmode (case 1350059)
-            if (!Application.isBatchMode)
-                Debug.LogWarning(warning, context);
-        }
-
         /// <summary>
         /// Add a new material using the specified base and stencil ID.
         /// </summary>
@@ -56,32 +49,32 @@ namespace UnityEngine.UI
 
             if (!baseMat.HasProperty("_Stencil"))
             {
-                LogWarningWhenNotInBatchmode("Material " + baseMat.name + " doesn't have _Stencil property", baseMat);
+                Debug.LogWarning("Material " + baseMat.name + " doesn't have _Stencil property", baseMat);
                 return baseMat;
             }
             if (!baseMat.HasProperty("_StencilOp"))
             {
-                LogWarningWhenNotInBatchmode("Material " + baseMat.name + " doesn't have _StencilOp property", baseMat);
+                Debug.LogWarning("Material " + baseMat.name + " doesn't have _StencilOp property", baseMat);
                 return baseMat;
             }
             if (!baseMat.HasProperty("_StencilComp"))
             {
-                LogWarningWhenNotInBatchmode("Material " + baseMat.name + " doesn't have _StencilComp property", baseMat);
+                Debug.LogWarning("Material " + baseMat.name + " doesn't have _StencilComp property", baseMat);
                 return baseMat;
             }
             if (!baseMat.HasProperty("_StencilReadMask"))
             {
-                LogWarningWhenNotInBatchmode("Material " + baseMat.name + " doesn't have _StencilReadMask property", baseMat);
+                Debug.LogWarning("Material " + baseMat.name + " doesn't have _StencilReadMask property", baseMat);
                 return baseMat;
             }
             if (!baseMat.HasProperty("_StencilWriteMask"))
             {
-                LogWarningWhenNotInBatchmode("Material " + baseMat.name + " doesn't have _StencilWriteMask property", baseMat);
+                Debug.LogWarning("Material " + baseMat.name + " doesn't have _StencilWriteMask property", baseMat);
                 return baseMat;
             }
             if (!baseMat.HasProperty("_ColorMask"))
             {
-                LogWarningWhenNotInBatchmode("Material " + baseMat.name + " doesn't have _ColorMask property", baseMat);
+                Debug.LogWarning("Material " + baseMat.name + " doesn't have _ColorMask property", baseMat);
                 return baseMat;
             }
 
